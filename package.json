@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel lib -d dist",
     "serve": "node dist/index.js",
-    "start": "nodemon lib/index.js --exec babel-node",
+    "start": "nodemon lib/server/index.js --exec babel-node",
     "test": "mocha --compilers js:babel-register"
   },
   "author": "Bruno Sautron <sautron.brunojj@gmail.com> (http://whoisbruno.com)",
@@ -17,5 +17,15 @@
     "babel-preset-stage-3": "^6.5.0",
     "babel-register": "^6.9.0",
     "mocha": "^2.4.5"
+  },
+  "dependencies": {
+    "bcrypt": "^0.8.6",
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "jsonwebtoken": "^7.0.0",
+    "mongoose": "^4.4.17",
+    "morgan": "^1.7.0",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.0.0"
   }
 }
