@@ -1,12 +1,12 @@
 {
   "name": "test-server",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "app.js",
   "scripts": {
     "build": "babel lib -d dist",
     "serve": "node dist/index.js",
-    "start": "nodemon lib/server/index.js --exec babel-node",
+    "start": "DEBUG=morgan nodemon lib/server/index.js --exec babel-node",
     "test": "mocha --async-only --compilers js:babel-register test/"
   },
   "author": "Bruno Sautron <sautron.brunojj@gmail.com> (http://whoisbruno.com)",

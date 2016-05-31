@@ -8,7 +8,7 @@ import '../lib/server/index';
 
 const URL = `http://localhost:${config.port}`;
 
-describe('Get simple page', () => {
+describe('GET simple page', () => {
   let tests = [
     {'path': '/', statusCode: 404},
     {'path': '/api', statusCode: 200},
@@ -17,7 +17,7 @@ describe('Get simple page', () => {
   ];
 
   tests.forEach((test) => {
-    it(`Get ${test.path} should return ${test.statusCode}`, (done) => {
+    it(`GET ${test.path} should return ${test.statusCode}`, (done) => {
       let options = {
         method: 'GET',
         url: `${URL}${test.path}`,
@@ -37,21 +37,23 @@ describe('Test bdd', () => {
 
   let users = {
     'bruno': { username: 'Bruno', password: 'yoloswag', email: 'sautron.brunojj@gmail.com' },
-    'manue': { username: 'Manue', password: 'swaga' },
-    'noUsername': { password: 'yoloswag' },
-    'noPassword': { username: 'Pierre' },
+    'manue': { username: 'Manue', password: 'swaga', email: 'manue.termeau@gmail.com' },
+    'noUsername': { password: 'yoloswag', email: 'yolo@swag.org' },
+    'noPassword': { username: 'Pierre', email: 'pierreiatre@hotmail.com'},
+    'noEmail': { username: 'good', password: 'goodtoo'},
     'noThing': {}
   };
 
-  let bruno = new models.UserSchema(users['bruno']);
-  let manue = new models.UserSchema(users['manue']);
+
 
   const cleanUp = (done) => models.UserSchema.remove({}, () => done());
   const initUp = (done) => {
+    let bruno = models.UserSchema(users['bruno']);
+    let manue = models.UserSchema(users['manue']);
     bruno.save()
       .then(() => manue.save())
-      .then(() => done())
-      .catch((err) => done(err));
+      .then(() => done({bruno, manue}))
+      .catch((err) => done({err}));
     };
 
   beforeEach(cleanUp);
@@ -68,9 +70,10 @@ describe('Test bdd', () => {
     let tests = [
       {name: 'bruno', user: users['bruno'], success: true, role: 'client'},
       {name: 'manue', user: users['manue'], success: true, role: 'client'},
-      {name: 'noUsername', user: users['noUsername'], success: false, message: 'Path `username` is required.'},
-      {name: 'noPassword', user: users['noPassword'], success: false, message: 'Path `password` is required.'},
-      {name: 'noThing', user: users['noThing'], success: false, message: 'Path `username` is required.'},
+      {name: 'noUsername', user: users['noUsername'], success: false, code: 1002},
+      {name: 'noPassword', user: users['noPassword'], success: false, code: 1003},
+      {name: 'noEmail', user: users['noEmail'], success: false, code: 1004},
+      {name: 'noThing', user: users['noThing'], success: false, code: 1004},
     ];
 
     tests.forEach((test) => {
@@ -84,7 +87,8 @@ describe('Test bdd', () => {
             assert.strictEqual(test.user.username.toLowerCase(), body.response.username);
             assert.strictEqual(test.role, body.response.role);
           } else {
-            assert.equal(test.message, (body.err.errors.username) ? body.err.errors.username.message : body.err.errors.password.message );
+            assert.strictEqual(false, body.success);
+            assert.strictEqual(test.code, body.err.code);
           }
           done();
         });
@@ -92,7 +96,7 @@ describe('Test bdd', () => {
     });
   });
 
-  describe('Get /user - list of all users', () => {
+  describe('GET /user - list of all users', () => {
     const options = {
       method: 'GET',
       url: `${URL}/api/user`,
@@ -102,52 +106,91 @@ describe('Test bdd', () => {
 
     it('No user', (done) => {
       request(options, (req, res, body) => {
-        assert.equal(0, body.response.length);
+        assert.equal(0, Object.keys(body.response).length);
         done();
       });
     });
     it('2 user', (done) => {
       models.UserSchema.remove({}, (err) => {
-        initUp((err) => {
+        initUp(({err}) => {
           if (err) done(err);
           else request(options, (req, res, body) => {
-            assert.equal(2, body.response.length);
+            assert.equal(2, Object.keys(body.response).length);
             done();
           });
         });
       });
-      // bruno.save().then((results) => {
-      //   request(options, (req, res, body) => {
-      //     console.log(body);
-      //     assert.equal(2, body.response.length);
-      //     done();
-      //   });
-      // }).catch((err) => {
-      //   console.log(err);
-      //   done(err);
-      // });
     });
   });
 
-  describe('Get /user/:id', () => {
-    beforeEach(() => initUp);
+  describe('GET /user/:id', () => {
+    let tests = [
+      {success: true, name: 'bruno'},
+      {success: true, name: 'manue'},
+      {success: false, name: 'bad id', id: '345345'},
+      {success: false, name: 'bad id2', id: 'sgs3ergse5r'},
+    ];
 
-    const options = {
-      method: 'GET',
-      url: `${URL}/api/user/`,
-      json: true,
-      body: {}
-    };
+    for (let test of tests) {
+      it(`GET ${test.name}`, (done) => {
+        initUp((user) => {
+          let options = {
+            method: 'GET',
+            url: `${URL}/api/user/`,
+            json: true,
+            body: {}
+          };
 
-    it('Get bruno', (done) => {
-      let tmpOptions = options;
+          options.url += (test.id) ? test.id : user[test.name]._id;
+          request(options, (req, res, body) => {
+            if (test.success) {
+              assert.strictEqual(true, body.success);
+              assert.strictEqual(test.name, body.response.username);
+            } else {
+              assert.strictEqual(false, body.success);
+              assert.strictEqual(1100, body.err.code);
+            }
+            done();
+          });
+        });
 
-      tmpOptions.url += bruno._id;
-      // console.log(tmpOptions);
-      request(tmpOptions, (req, res, body) => {
-        // console.log(body);
-        done();
       });
-    });
+    }
+
+  });
+
+  describe('DELETE /user/:id', () => {
+    let tests = [
+      {success: true, name: 'bruno'},
+      {success: true, name: 'manue'},
+      {success: false, name: 'bad id', id: '345345'},
+      {success: false, name: 'bad id2', id: 'sgs3ergse5r'},
+    ];
+
+    for (let test of tests) {
+      it(`DELETE ${test.name}`, (done) => {
+        initUp((user) => {
+          let options = {
+            method: 'DELETE',
+            url: `${URL}/api/user/`,
+            json: true,
+            body: {}
+          };
+
+          options.url += (test.id) ? test.id : user[test.name]._id;
+          request(options, (req, res, body) => {
+            if (test.success) {
+              assert.strictEqual(true, body.success);
+            } else {
+              assert.strictEqual(false, body.success);
+              assert.strictEqual(1100, body.err.code);
+            }
+            done();
+          });
+        });
+
+      });
+    }
+
   });
 });
