@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "build": "babel lib -d dist",
-    "serve": "node dist/index.js",
+    "serve": "node dist/server/index.js",
     "start": "DEBUG=oauth2orize nodemon lib/server/index.js --exec babel-node",
     "test": "mocha --async-only --compilers js:babel-register test/"
   },
@@ -19,9 +19,9 @@
     "mocha": "^2.4.5"
   },
   "dependencies": {
-    "mongoose": "^4.4.19",
     "bcrypt": "^0.8.6",
     "body-parser": "^1.15.1",
+    "cors": "^2.7.1",
     "ejs": "^2.4.2",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
