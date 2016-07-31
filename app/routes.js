@@ -2,6 +2,7 @@ import express from 'express';
 
 import config from './config';
 import logger from './utils/logger';
+import * as auth from './modules/acl/acl-service';
 
 const moduleFolder = './modules';
 
@@ -20,9 +21,13 @@ function routering () {
 			const method = route.method;
 			const path = route.path;
 			const handler = route.handler;
+			const allow = route.allow;
 
 			logger.debug(`Set path: ${method} ${path}`);
-			app[method.toLowerCase()](path, handler);
+			if (!allow.hasOwnProperty('guest'))
+				app[method.toLowerCase()](path, auth.isAuthenticated, handler);
+			else
+				app[method.toLowerCase()](path, handler);
 		}
 	}
 

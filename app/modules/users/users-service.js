@@ -1,26 +1,45 @@
 import logger from '../../utils/logger';
-import User from './users-schema';
+import UserSchema from './users-schema';
 import ApiError from '../../utils/errors/api-error';
 
 export default {
+	front,
+	frontList,
+
+	findUser,
 	getUsers,
 	getUser,
-	createUser
+	createUser,
+	updateUser,
+	deleteUser
 };
 
 function getUsers() {
 	logger.debug('getUsers');
-	return User.find({});
+	return UserSchema.find({});
 }
 
 function getUser(id) {
 	logger.debug('getUser', id);
 	return new Promise((resolve, reject) => {
-		User.findOne({_id: id})
+		UserSchema.findOne({_id: id})
 			.then((user) => {
 				if (!user) return reject(new ApiError('user-not-found'));
 				resolve(user);
-			});
+			})
+			.catch((err) => reject(err));
+	});
+}
+
+function findUser(username) {
+	logger.debug('findUser', username);
+	return new Promise((resolve, reject) => {
+		UserSchema.findOne({username: username})
+			.then((user) => {
+				if (!user) return reject(new ApiError('user-not-found'));
+				resolve(user);
+			})
+			.catch((err) => reject(err));
 	});
 }
 
@@ -28,9 +47,11 @@ function createUser(body) {
 	logger.debug('createUser', body);
 
 	return new Promise((resolve, reject) => {
-		const user = new User(body);
+		body.role = 'member';
+		const user = new UserSchema(body);
 
-		return user.save()
+		user.save()
+			.then((user) => resolve(user))
 			.catch((err) => {
 				let apiError;
 
@@ -47,4 +68,29 @@ function createUser(body) {
 				reject(apiError || err);
 			});
 	});
+}
+
+function deleteUser(id) {
+	logger.debug('deleteUser', id);
+
+	return UserSchema.remove({_id: id});
+}
+
+function updateUser(id, body) {
+	logger.debug('updateUser', id);
+
+	return UserSchema.update({_id: id}, body);
+}
+
+function front(user) {
+	return UserSchema.front(user);
+}
+
+function frontList(users) {
+	let front = [];
+
+	for (let user of users) {
+		front.push(UserSchema.front(user));
+	}
+	return front;
 }
