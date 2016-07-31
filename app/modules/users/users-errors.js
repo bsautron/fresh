@@ -1,8 +1,9 @@
 export default {
 	'user-not-found': {status: 404, description: 'User not found', code: 1000},
-	'username-already-exist': {status: 409, description: 'This username already exist', code: 1001},
-	'email-already-exist': {status: 409, description: 'This email already exist', code: 1002},
-	'password-bad-format': {status: 409, description: 'Bad password format', code: 1003},
+	'user-validation-failed': {status: 409, description: 'User validation failed', code: 1001},
+	'user-already-exist': {status: 409, description: 'This user already exist', code: 1002},
+	'email-already-exist': {description: 'This email already exist', code: 1003},
+	'usename-already-exist': {description: 'This usename already exist', code: 1004},
 };
 
 

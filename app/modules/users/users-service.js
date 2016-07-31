@@ -26,12 +26,25 @@ function getUser(id) {
 
 function createUser(body) {
 	logger.debug('createUser', body);
-	const user = new User(body);
 
-	return user.save()
-		.catch((err) => {
-			logger.info(err.toJSON());
+	return new Promise((resolve, reject) => {
+		const user = new User(body);
 
-			return err;
-		});
+		return user.save()
+			.catch((err) => {
+				let apiError;
+
+				if (err.name == 'ValidationError') {
+					apiError = new ApiError('user-validation-failed');
+
+					for (let filed in err.errors) {
+						apiError.add(err.errors[filed]);
+					}
+				} else if (err.code == 11000) {
+					apiError = new ApiError('user-already-exist');
+					apiError.add(`${err.errmsg.match(/(\w+)_1/)[1]}-already-exist`);
+				}
+				reject(apiError || err);
+			});
+	});
 }

@@ -21,7 +21,7 @@ const logger = new winston.Logger({
 			colorize: true
 		})
 	],
-	exitOnError: false
+	exitOnError: true
 });
 
 const stream = {
