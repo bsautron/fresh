@@ -2,7 +2,7 @@ import winston from 'winston';
 
 winston.emitErrs = true;
 
-const logger = new winston.Logger({
+const winstonLogger = new winston.Logger({
 	transports: [
 		new winston.transports.File({
 			level: 'info',
@@ -24,9 +24,23 @@ const logger = new winston.Logger({
 	exitOnError: true
 });
 
+const logger = (prefix) => {
+	return {
+		info(...messages) {
+			winstonLogger.info(((prefix) ? (prefix + ': ') : '') + messages.join(' '));
+		},
+		error(...messages) {
+			winstonLogger.error(((prefix) ? (prefix + ': ') : '') + messages.join(' '));
+		},
+		debug(...messages) {
+			winstonLogger.debug(((prefix) ? (prefix + ': ') : '') + messages.join(' '));
+		}
+	};
+};
+
 const stream = {
 	write(message, encoding) {
-		logger.info(message);
+		winstonLogger.info('express:', message);
 	}
 };
 

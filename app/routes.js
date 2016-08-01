@@ -4,6 +4,7 @@ import config from './config';
 import logger from './utils/logger';
 import * as auth from './modules/acl/acl-service';
 
+const log = logger('routes');
 const moduleFolder = './modules';
 
 function routering () {
@@ -15,7 +16,7 @@ function routering () {
 	for (const mod of config.modules) {
 		const routes = require(`${moduleFolder}/${mod}-routes`).default;
 
-		logger.info(`Available module: ${mod}`);
+		log.info(`Available module: ${mod}`);
 
 		for (const route of routes) {
 			const method = route.method;
@@ -23,16 +24,17 @@ function routering () {
 			const handler = route.handler;
 			const allow = route.allow;
 
-			logger.debug(`Set path: ${method} ${path}`);
+			logger().debug(`Set path: ${method} ${path}`);
 			if (!allow.hasOwnProperty('guest'))
-				app[method.toLowerCase()](path, auth.isAuthenticated, handler);
-			else
+				app[method.toLowerCase()](path, auth.isAuthenticated, auth.isAuthorized(allow), handler);
+			else {
 				app[method.toLowerCase()](path, handler);
+			}
 		}
 	}
 
 	app.use((err, req, res, next) => {
-		logger.error(err);
+		log.error(err);
 		res.status(err.status || 500);
 		res.json(err);
 	});

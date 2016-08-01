@@ -2,6 +2,8 @@ import logger from '../../utils/logger';
 import UserSchema from './users-schema';
 import ApiError from '../../utils/errors/api-error';
 
+const log = logger('users');
+
 export default {
 	front,
 	frontList,
@@ -15,12 +17,12 @@ export default {
 };
 
 function getUsers() {
-	logger.debug('getUsers');
+	log.debug('getUsers');
 	return UserSchema.find({});
 }
 
 function getUser(id) {
-	logger.debug('getUser', id);
+	log.debug('getUser', id);
 	return new Promise((resolve, reject) => {
 		UserSchema.findOne({_id: id})
 			.then((user) => {
@@ -32,7 +34,7 @@ function getUser(id) {
 }
 
 function findUser(username) {
-	logger.debug('findUser', username);
+	log.debug('findUser', username);
 	return new Promise((resolve, reject) => {
 		UserSchema.findOne({username: username})
 			.then((user) => {
@@ -44,7 +46,7 @@ function findUser(username) {
 }
 
 function createUser(body) {
-	logger.debug('createUser', body);
+	log.debug('createUser');
 
 	return new Promise((resolve, reject) => {
 		body.role = 'member';
@@ -71,13 +73,13 @@ function createUser(body) {
 }
 
 function deleteUser(id) {
-	logger.debug('deleteUser', id);
+	log.debug('deleteUser', id);
 
 	return UserSchema.remove({_id: id});
 }
 
 function updateUser(id, body) {
-	logger.debug('updateUser', id);
+	log.debug('updateUser', id);
 
 	return UserSchema.update({_id: id}, body);
 }

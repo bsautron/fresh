@@ -8,9 +8,11 @@ import config from './app/config';
 import routes from './app/routes';
 import packageJson from './package.json';
 
+const log = logger('app');
+
 mongoose.Promise = global.Promise;
 
-logger.info(`Starting app: ${packageJson.name} [${packageJson.version}]`);
+log.info(`Starting app: ${packageJson.name} [${packageJson.version}]`);
 
 const app = express()
 	.set('title', packageJson.name)
@@ -23,8 +25,8 @@ const app = express()
 
 mongoose.connect(config.db)
 	.then(() => {
-		logger.info(`DB connected to ${config.db}`);
+		log.info(`DB connected to ${config.db}`);
 		return app.listen(config.port);
 	}).then(() => {
-		logger.info(`App listening on ${app.get('port')}`);
+		log.info(`App listening on ${app.get('port')}`);
 	});

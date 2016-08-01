@@ -1,4 +1,7 @@
 import Users from './users-service';
+import logger from '../../utils/logger';
+
+const log = logger('users');
 
 export default {
 	getUsers,
@@ -23,6 +26,7 @@ function getUser (req, res, next) {
 }
 
 function postUser (req, res, next) {
+	log.debug('postUser');
 	Users.createUser(req.body)
 		.then((user) => res.json(Users.front(user)))
 		.catch((err) => next(err));

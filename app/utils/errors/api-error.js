@@ -2,6 +2,7 @@ import config from '../../config';
 import errorsCommun from './errors-commun';
 import logger from '../logger';
 
+const log = logger('api-error');
 const moduleFolder = '../../modules';
 let errorsAvailable = errorsCommun;
 
@@ -15,8 +16,8 @@ export default class ApiError {
 
 		const err = errorsAvailable[slug];
 
-		if (!err) return logger.error(`Error [${slug}] does not exist`);
-		if (!err.status) return logger.error(`Error [${slug}] can't be set`);
+		if (!err) return log.error(`Error [${slug}] does not exist`);
+		if (!err.status) return log.error(`Error [${slug}] can't be set`);
 
 		this.short = slug;
 		this.code = err.code;
@@ -36,8 +37,8 @@ export default class ApiError {
 		if (typeof slug === 'string') {
 			const err = errorsAvailable[slug];
 
-			if (!err) return logger.error(`Error [${slug}] does not exist`);
-			if (err.status) return logger.error(`Error [${slug}] can't be pushed`);
+			if (!err) return log.error(`Error [${slug}] does not exist`);
+			if (err.status) return log.error(`Error [${slug}] can't be pushed`);
 
 			this.errors.push({
 				short: slug,
