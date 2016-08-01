@@ -81,7 +81,7 @@ function deleteUser(id) {
 function updateUser(id, body) {
 	log.debug('updateUser', id);
 
-	return UserSchema.update({_id: id}, body);
+	return UserSchema.update({_id: id}, {$set: body});
 }
 
 function front(user) {
