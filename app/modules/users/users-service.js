@@ -21,28 +21,14 @@ function getUsers() {
 	return UserSchema.find({});
 }
 
-function getUser(id) {
-	log.debug('getUser', id);
-	return new Promise((resolve, reject) => {
-		UserSchema.findOne({_id: id})
-			.then((user) => {
-				if (!user) return reject(new ApiError('user-not-found'));
-				resolve(user);
-			})
-			.catch((err) => reject(err));
-	});
+function getUser(userId) {
+	log.debug('getUser', userId);
+	return UserSchema.findOne({_id: userId});
 }
 
 function findUser(username) {
 	log.debug('findUser', username);
-	return new Promise((resolve, reject) => {
-		UserSchema.findOne({username: username})
-			.then((user) => {
-				if (!user) return reject(new ApiError('user-not-found'));
-				resolve(user);
-			})
-			.catch((err) => reject(err));
-	});
+	return UserSchema.findOne({username: username});
 }
 
 function createUser(body) {
@@ -72,16 +58,16 @@ function createUser(body) {
 	});
 }
 
-function deleteUser(id) {
-	log.debug('deleteUser', id);
+function deleteUser(userId) {
+	log.debug('deleteUser', userId);
 
-	return UserSchema.remove({_id: id});
+	return UserSchema.remove({_id: userId});
 }
 
-function updateUser(id, body) {
+function updateUser(userId, body) {
 	log.debug('updateUser', id);
 
-	return UserSchema.update({_id: id}, {$set: body});
+	return UserSchema.update({_id: userId}, {$set: body});
 }
 
 function front(user) {

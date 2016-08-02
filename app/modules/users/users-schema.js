@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import * as Acl from '../acl/acl-service';
+import ApiError from '../../utils/errors/api-error';
 import bcrypt from 'bcrypt';
 
 const validators = {
@@ -31,6 +32,10 @@ UserSchema.pre('save', function(next) {
 			next();
 		});
 	});
+});
+
+UserSchema.post('findOne', (user, next) => {
+	next((!user) ? new ApiError('user-not-found') : null);
 });
 
 UserSchema.statics.front = function(user) {

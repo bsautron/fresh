@@ -21,8 +21,14 @@ function getUser (req, res, next) {
 	const userId = req.params.userId;
 
 	Users.getUser(userId)
-		.then((user) => res.json(Users.front(user)))
-		.catch((err) => next(err));
+		.then((user) => {
+			console.log('suc:', user);
+			res.json(Users.front(user));
+		})
+		.catch((err) => {
+			console.log('fai:', err);
+			next(err);
+		});
 }
 
 function postUser (req, res, next) {
