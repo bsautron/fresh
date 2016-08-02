@@ -5,9 +5,6 @@ import ApiError from '../../utils/errors/api-error';
 const log = logger('users');
 
 export default {
-	front,
-	frontList,
-
 	findUser,
 	getUsers,
 	getUser,
@@ -68,17 +65,4 @@ function updateUser(userId, body) {
 	log.debug('updateUser', id);
 
 	return UserSchema.update({_id: userId}, {$set: body});
-}
-
-function front(user) {
-	return UserSchema.front(user);
-}
-
-function frontList(users) {
-	let front = [];
-
-	for (let user of users) {
-		front.push(UserSchema.front(user));
-	}
-	return front;
 }

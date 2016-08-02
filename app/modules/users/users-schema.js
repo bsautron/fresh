@@ -13,10 +13,10 @@ const validators = {
 const UserSchema = new mongoose.Schema({
 	email: 		{type: String, required: true, select: true, lowercase: true, unique: true, trim: true},
 	username: {type: String, required: true, select: true, lowercase: true, unique: true, trim: true},
-	password: {type: String, required: true, select: true, validate: validators.password}, // TODO: select false
+	password: {type: String, required: true, select: false, validate: validators.password},
 	age: 			{type: Number, required: true, select: true, min: 18, max: 100},
 	role: 		{type: String, required: true, select: true, enum: Acl.roles, default: 'member'}
-}, {timestamps: true});
+}, {timestamps: true, versionKey: false});
 
 
 UserSchema.pre('save', function(next) {
@@ -38,25 +38,11 @@ UserSchema.post('findOne', (user, next) => {
 	next((!user) ? new ApiError('user-not-found') : null);
 });
 
-UserSchema.statics.front = function(user) {
-	return {
-		id: user._id,
-		username: user.username,
-		email: user.email,
-		age: user.age,
-		role: user.role,
-		createdAt: user.createdAt,
-		updatedAt: user.updatedAt
-	};
-};
-
 UserSchema.methods.verifyPassword = function(password) {
-	return new Promise((resolve, reject) => {
-		bcrypt.compare(password, this.password, (err, isMatch) => {
-			if (err) reject(err);
-			else resolve(isMatch);
-		});
-	});
+	return new Promise(
+		(resolve, reject) => bcrypt.compare(password, this.password,
+		(err, isMatch) => (err) ? reject(err) : resolve(isMatch))
+	);
 };
 
 export default mongoose.model('User', UserSchema);

@@ -17,12 +17,9 @@ export const roles = [
 ];
 
 passport.use(new BasicStrategy((username, password, next) => {
-	Users.findUser(username)
-		.then((user) => {
-			return user.verifyPassword(password).then((isMatch) => {
-				next((isMatch) ? null : new ApiError('not-authorized'), user);
-			});
-		})
+	Users.findUser(username).select('password').exec()
+		.then((user) => user.verifyPassword(password)
+		.then((isMatch) => next((!isMatch) ? new ApiError('not-authorized') : null, user)))
 		.catch((err) => next(new ApiError('not-authorized')));
 }));
 
@@ -43,8 +40,7 @@ export const isAuthorized = (allows) => {
 		if (perms.includes('*')) return next();
 		if (perms.includes('own') && questioner.id == targetId) return next();
 
-		Users.getUser(req.params.userId)
-		.then((userTarget) => {
+		Users.getUser(req.params.userId).then((userTarget) => {
 			if (perms.includes(userTarget.role)) {
 				req.userTarget = userTarget;
 				next();

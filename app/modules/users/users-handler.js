@@ -13,7 +13,7 @@ export default {
 
 function getUsers (req, res, next) {
 	Users.getUsers()
-		.then((users) => res.json(Users.frontList(users)))
+		.then((users) => res.json(users))
 		.catch((err) => next(err));
 }
 
@@ -21,19 +21,13 @@ function getUser (req, res, next) {
 	const userId = req.params.userId;
 
 	Users.getUser(userId)
-		.then((user) => {
-			console.log('suc:', user);
-			res.json(Users.front(user));
-		})
-		.catch((err) => {
-			console.log('fai:', err);
-			next(err);
-		});
+		.then((user) => res.json(user))
+		.catch((err) => next(err));
 }
 
 function postUser (req, res, next) {
 	Users.createUser(req.body)
-		.then((user) => res.json(Users.front(user)))
+		.then((user) => res.json(user))
 		.catch((err) => next(err));
 }
 
@@ -42,7 +36,7 @@ function putUser (req, res, next) {
 	const body = req.params.body;
 
 	Users.updateUser(userId, body)
-		.then((user) => res.json(Users.front(user)))
+		.then((user) => res.json(user))
 		.catch((err) => next(err));
 }
 
@@ -50,6 +44,6 @@ function deleteUser (req, res, next) {
 	const userId = req.params.userId;
 
 	Users.deleteUser(userId)
-		.then((user) => res.json(Users.front(user)))
+		.then((user) => res.json(user))
 		.catch((err) => next(err));
 }
