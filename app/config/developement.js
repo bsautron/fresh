@@ -6,6 +6,7 @@ export default {
 	'email': false,
 	'log': true,
 	'modules': [
-		'users/users'
+		'users/users',
+		'fridges/fridges'
 	]
 };

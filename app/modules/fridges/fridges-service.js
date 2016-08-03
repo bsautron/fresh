@@ -7,7 +7,6 @@ const log = logger('fridges');
 export default {
 	getFridge,
 	getFridges,
-
 	getUserFridge,
 	getUserFridges,
 	createUserFridge
@@ -15,7 +14,7 @@ export default {
 
 function getFridge(fridgeId) {
 	log.debug('getFridge');
-	return FridgeSchema.find({_id: fridgeId});
+	return FridgeSchema.findOne({_id: fridgeId});
 }
 
 function getFridges() {
@@ -30,7 +29,7 @@ function getUserFridges(userId) {
 
 function getUserFridge(userId, fridgeId) {
 	log.debug('getUserFridge');
-	return FridgeSchema.find({owner: userId, _id: fridgeId});
+	return FridgeSchema.findOne({owner: userId, _id: fridgeId});
 }
 
 function createUserFridge(userId, body) {
