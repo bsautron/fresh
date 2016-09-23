@@ -25,23 +25,18 @@ const winstonLogger = new winston.Logger({
 });
 
 const logger = (prefix) => {
+
+	const loggerLevel = (level, prefix, messages) => winstonLogger[level](((prefix) ? (prefix + ': ') : '') + messages.join(' '));
+
 	return {
-		info(...messages) {
-			winstonLogger.info(((prefix) ? (prefix + ': ') : '') + messages.join(' '));
-		},
-		error(...messages) {
-			winstonLogger.error(((prefix) ? (prefix + ': ') : '') + messages.join(' '));
-		},
-		debug(...messages) {
-			winstonLogger.debug(((prefix) ? (prefix + ': ') : '') + messages.join(' '));
-		}
+		info: (...messages) => loggerLevel('info', prefix, messages),
+		error: (...messages) => loggerLevel('error', prefix, messages),
+		debug: (...messages) => loggerLevel('debug', prefix, messages)
 	};
 };
 
 const stream = {
-	write(message, encoding) {
-		winstonLogger.info('express:', message);
-	}
+	write: (message, encoding) => winstonLogger.info('express:', message)
 };
 
 export default logger;

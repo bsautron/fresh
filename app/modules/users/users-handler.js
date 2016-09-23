@@ -8,7 +8,8 @@ export default {
 	getUser,
 	postUser,
 	putUser,
-	deleteUser
+	deleteUser,
+	authentificate
 };
 
 function getUsers (req, res, next) {
@@ -45,5 +46,13 @@ function deleteUser (req, res, next) {
 
 	Users.deleteUser(userId)
 		.then((user) => res.json(user))
+		.catch((err) => next(err));
+}
+
+function authentificate(req, res, next) {
+	const {username, password} = req.body;
+
+	Users.createToken(username, password)
+		.then((token) => res.json(token))
 		.catch((err) => next(err));
 }

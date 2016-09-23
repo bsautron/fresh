@@ -34,7 +34,7 @@ function routering () {
 	}
 
 	app.use((err, req, res, next) => {
-		log.error(err);
+		log.error(err.stack);
 		res.status(err.status || 500);
 		res.json(err);
 	});

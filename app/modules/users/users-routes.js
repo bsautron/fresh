@@ -2,6 +2,12 @@ import UsersHandler from './users-handler';
 
 export default [
 	{
+		method: 'POST', path: '/users/authentificate', handler: UsersHandler.authentificate,
+		allow: {
+			'guest':	{perms: ['*']}
+		}
+	},
+	{
 		method: 'GET', path: '/users', handler: UsersHandler.getUsers,
 		allow: {
 			'member':	{perms: ['*']},

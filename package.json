@@ -4,7 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js --exec 'babel-node'",
+    "start": "nodemon app/app.js --exec 'babel-node'",
+    "build": "babel app -d dist",
+    "serve": "node ./dist/app.js",
     "test": "mocha --compilers js:babel-register"
   },
   "author": "Bruno Sautron <sautron.brunojj@gmail.com> (http://whoisbruno.com)",
@@ -19,6 +21,7 @@
     "bcrypt": "^0.8.7",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "jsonwebtoken": "^7.1.9",
     "mongoose": "^4.4.17",
     "morgan": "^1.7.0",
     "passport": "^0.3.2",

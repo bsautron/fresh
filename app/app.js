@@ -3,10 +3,10 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import express from 'express';
 
-import logger, {stream} from './app/utils/logger';
-import config from './app/config';
-import routes from './app/routes';
-import packageJson from './package.json';
+import logger, {stream} from './utils/logger';
+import config from './config';
+import routes from './routes';
+import packageJson from '../package.json';
 
 const log = logger('app');
 
@@ -29,4 +29,4 @@ mongoose.connect(config.db)
 		return app.listen(config.port);
 	}).then(() => {
 		log.info(`App listening on ${app.get('port')}`);
-	});
+	}).catch((err) => log.error(err));

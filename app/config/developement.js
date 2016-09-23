@@ -5,6 +5,11 @@ export default {
 	'db': 'mongodb://localhost:27017/localdata',
 	'email': false,
 	'log': true,
+	'jwt': {
+		'secret': 'secretdevelopment',
+		'algorithm': 'HS512',
+		'expiresIn': '1h'
+	},
 	'modules': [
 		'users/users'
 	]

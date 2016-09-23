@@ -11,8 +11,10 @@ for (const mod of config.modules) {
 	Object.assign(errorsAvailable, require(`${moduleFolder}/${mod}-errors`).default);
 }
 
-export default class ApiError {
+export default class ApiError extends Error {
 	constructor(slug) {
+		super(slug);
+		Error.captureStackTrace(this, this.constructor.name);
 
 		const err = errorsAvailable[slug];
 
@@ -29,6 +31,7 @@ export default class ApiError {
 			writable: false,
 			value: err.status
 		});
+
 	}
 
 	add(slug) {
@@ -49,3 +52,5 @@ export default class ApiError {
 		else this.errors.push(slug);
 	}
 }
+
+new ApiError('user-already-exist').stack;
